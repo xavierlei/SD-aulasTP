@@ -11,14 +11,18 @@ package sdguiao2;
  */
 public class Conta {
     private long saldo;
-    public Conta(){this.saldo = 0;}
+    public Conta(){this.saldo = 1000;}
     
     synchronized void deposito(long valor){
         this.saldo+=valor;
     }
     
-    synchronized void levantamento(long val){
-        this.saldo -=val;
+    synchronized boolean levantamento(long val){
+        if(this.saldo >=val){
+            this.saldo -=val;
+            return true;
+        }
+        return false;
     }
     synchronized long saldo(){
         return this.saldo;

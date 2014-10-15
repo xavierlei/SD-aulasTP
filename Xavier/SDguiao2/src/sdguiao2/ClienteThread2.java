@@ -22,7 +22,7 @@ public class ClienteThread2 extends Thread{
         long v = (long) ((Math.random()*System.currentTimeMillis())%876);
         banco.credito(numConta, 1000);
         banco.transferir(numConta, n, v);
-        System.out.println(banco.saldo(numConta));
+       // System.out.println(banco.saldo(numConta));
         
     }
 }

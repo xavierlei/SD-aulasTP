@@ -13,8 +13,8 @@ public class Banco2 {
     private Conta [] conta;
     public Banco2(){
         int i;
-        this.conta = new Conta[100];
-        for(i = 0; i < 100; i++){
+        this.conta = new Conta[10];
+        for(i = 0; i < 10; i++){
             conta[i] = new Conta();
         }
     }
@@ -23,25 +23,28 @@ public class Banco2 {
         
     }
     public boolean debito(int nConta, long valor){
-        synchronized(this){
-            if(conta[nConta].saldo() < valor)
-                return false;
-            conta[nConta].levantamento(valor);
-            return true;
-        }
+         return conta[nConta].levantamento(valor);
     }
     public long saldo(int nConta){
             return conta[nConta].saldo();
     }
     public boolean transferir(int origem, int destino, long valor){
-            if(!debito(destino,valor))
+        //synchronized é recursivo, o mesmo thread n é impedido de
+        //entrar na mesma secção crítica
+        //isto vai entrar em lock na situação em que ha duas threads com
+        //operações simetricas
+        synchronized(conta[destino]){
+            synchronized(conta[origem]){
+                 if(!debito(destino,valor))
                 return false;
             credito(origem,valor);
             return true;
+            }
+        }         
     }
     public void print(){
         int i;
-        for(i=0; i < 100; i++)
+        for(i=0; i < 10; i++)
             System.out.println(this.conta[i].saldo());
     }
 }
