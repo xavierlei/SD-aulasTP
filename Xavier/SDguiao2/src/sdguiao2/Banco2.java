@@ -10,40 +10,38 @@ package sdguiao2;
  * @author xavier
  */
 public class Banco2 {
-    private long [] conta;
+    private Conta [] conta;
     public Banco2(){
         int i;
-        this.conta = new long[100];
-        for(i=0; i<100; i++)
-            this.conta[i] = 0;
+        this.conta = new Conta[100];
+        for(i = 0; i < 100; i++){
+            conta[i] = new Conta();
+        }
     }
     public void credito(int nConta, long valor){
-        synchronized(this){
-            conta[nConta] = conta[nConta] + valor;
-        }
+            conta[nConta].deposito(valor);
         
     }
     public boolean debito(int nConta, long valor){
         synchronized(this){
-            if(conta[nConta] < valor)
+            if(conta[nConta].saldo() < valor)
                 return false;
-            conta[nConta] = conta[nConta] - valor;
+            conta[nConta].levantamento(valor);
             return true;
         }
     }
     public long saldo(int nConta){
-        synchronized(this){
-            return this.conta[nConta];
-        }
+            return conta[nConta].saldo();
     }
     public boolean transferir(int origem, int destino, long valor){
-        //nota: o synchronized é recursivo, ié entrando num synchronized ele
-        //pode chamar outro método synchronized
-        synchronized(this){
             if(!debito(destino,valor))
                 return false;
             credito(origem,valor);
             return true;
-        }   
+    }
+    public void print(){
+        int i;
+        for(i=0; i < 100; i++)
+            System.out.println(this.conta[i].saldo());
     }
 }

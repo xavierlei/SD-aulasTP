@@ -22,5 +22,7 @@ public class Main4 {
         for(i = 0; i < 100; i++){
             listaC[i].join();
         }
+        bank.print();
     }
+    
 }
