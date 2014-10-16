@@ -1,18 +1,18 @@
+/*
+* exclusao mutua ao nivel das contas -> banco nao fica bloqueado quando ocorrem operacoes entre contas diferentes
+* uma thread que trabalhe numa conta bloqueia acesso a outra -> maior concorrencia
+*/
+
 import java.lang.Thread;
 
 class Account {
-  private int id;
   public int balance;
 
-  public Account() {
-    balance = 0;
-  }
-
-  synchronized public void debit(int amount) {
+  synchronized public void withdraw(int amount) {
     balance -= amount;
   }
 
-  synchronized public void credit(int amount) {
+  synchronized public void deposit(int amount) {
     balance += amount;
   }
 
@@ -31,12 +31,12 @@ class Bank {
     }
   }
 
-  public void debit(int id, int amount) {
-    accounts[id].debit(amount);
+  public void withdraw(int id, int amount) {
+    accounts[id].withdraw(amount);
   }
 
-  public void credit(int id, int amount) {
-    accounts[id].credit(amount);
+  public void deposit(int id, int amount) {
+    accounts[id].deposit(amount);
   }
 
   public int getBalance(int id) {
@@ -44,33 +44,30 @@ class Bank {
   }
 
   public void transfer(int acc1, int acc2, int amount) {
-    this.debit(acc1,amount);
-    this.credit(acc2,amount);
-  }
+    int i1, i2;
+    if(acc1 < acc2) {
+      i1 = acc1; i2 = acc2;
+    }
+    else {
+      i1 = acc2; i2 = acc2;
+    }
 
+    synchronized(accounts[i1]){
+      synchronized(accounts[i2]){
+        accounts[i1].withdraw(amount);
+        accounts[i2].deposit(amount);
+      }
+    }
+  }
 }
 
 class Main {
   public static void main(String[] args) throws InterruptedException {
-    int N = 100;
+    int N = 1000;
     final Bank bank = new Bank(N);
 
     for(int i = 0; i < N; i++) {
-      bank.credit(i,1000);
-    }
-
-    class DebitT extends Thread {
-      public void run() {
-        int acc = (int) (Math.random() * 100);
-        bank.debit(acc,500);
-      }
-    }
-
-    class CreditT extends Thread {
-      public void run() {
-        int acc = (int) (Math.random() * 100);
-        bank.credit(acc,500);
-      }
+      bank.deposit(i,10000);
     }
 
     class TransferT extends Thread {
@@ -87,31 +84,19 @@ class Main {
         bank.transfer(acc1,acc2,amount);
       }
     }
-    /*
-    DebitT[] dt = new DebitT[N];
-    CreditT[] ct = new CreditT[N];
 
-    for(int i = 0; i < N; i++) {
-      dt[i] = new DebitT(); dt[i].start();
-      ct[i] = new CreditT(); ct[i].start();
-    }
-
-    for(int i = 0; i < N; i++) {
-      dt[i].join();
-      ct[i].join();
-    }
-    */
     TransferT[] tt = new TransferT[N];
-    for(int i = 0; i < N/2; i++) {
-      tt[i] = new TransferT(i,(N/2) + i,500);
+
+    for(int i = 0; i < N; i++) {
+      tt[i] = new TransferT(0,1,5);
       tt[i].start();
     }
 
-    for(int i = 0; i < N/2; i++) {
+    for(int i = 0; i < N; i++) {
       tt[i].join();
     }
-    
-    for(int i = 0; i < N; i++) {
+
+    for(int i = 0; i < 2; i++) {
       System.out.println("Account: " + i + " Balance: " + bank.getBalance(i));
     }
   }
