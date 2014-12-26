@@ -13,9 +13,7 @@ import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import org.w3c.dom.css.CSSPrimitiveValue;
+
 
 /**
  *
@@ -28,6 +26,7 @@ public class Soma_server {
        Socket cs;
        public ClientHandler(Socket cs){
            this.cs = cs;
+                   
        }
       
        @Override
@@ -43,22 +42,27 @@ public class Soma_server {
                                      PrintWriter pw = new PrintWriter(cs.getOutputStream());
                                      String s = br.readLine();
                                      inputs++;
-                                     if(s==null) {
-                                          int media = soma/inputs;
-                                         pw.println();
+                                     if(s.equals("sair")||s == null) {
+                                         inputs--;
+                                         int media = soma/inputs;
+                                         pw.println("media :"+media);
                                          pw.flush();
                                          break;
                                      }
                                      try{
                                         int i = Integer.parseInt(s);
                                         soma+= i; 
+                                        pw.println(soma);
+                                        pw.flush();
+                                        
                                      }catch(NumberFormatException ex){pw.println("not a number");inputs--;pw.flush();}
 
-                                     pw.println(soma);
-                                     pw.flush();
+                                     
                         }
-           cs.close();
-           }catch(Exception e){e.printStackTrace();}
+                cs.close();
+                
+           }catch(Exception e){e.printStackTrace();
+           }
          }
        }
 
@@ -72,9 +76,13 @@ public class Soma_server {
          try{
               ServerSocket ss = new ServerSocket(50000);
               while(true){     
-                   try (Socket cs = ss.accept()){        
-                       ClientHandler ch = new ClientHandler(cs);
-  
+                   try {
+                       Socket cs = ss.accept();       
+                      new ClientHandler(cs).start();
+                      
+                  }catch(SocketException ex)
+                  {
+                      ex.printStackTrace();
                   }
             }
        

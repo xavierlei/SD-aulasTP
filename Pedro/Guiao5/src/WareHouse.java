@@ -14,7 +14,7 @@ import java.util.concurrent.locks.ReentrantLock;
  *
  * @author Pedro
  */
-public class WareHouse {
+public class sdproject {
     class Produto
     {
       String nome;
@@ -29,19 +29,19 @@ public class WareHouse {
         }
     }
     Lock l;
-    HashMap<String,Produto> warehouse;
+    HashMap<String,Produto> sdproject;
     
-    public WareHouse()
+    public sdproject()
     {
         l= new ReentrantLock();
-        warehouse =new HashMap<>();
+        sdproject =new HashMap<>();
     }
     private Produto get(String s)
     {
-        Produto p = warehouse.get(s);
+        Produto p = sdproject.get(s);
         if(p!=null) return p;
         p =new Produto(s, 0, l.newCondition());
-        warehouse.put(s,p);
+        sdproject.put(s,p);
         return p;
     }
     
@@ -95,7 +95,7 @@ public class WareHouse {
                  }   
            }
            for(String s:items)
-               warehouse.get(s).qtd--;
+               sdproject.get(s).qtd--;
         }
         finally{
             l.unlock();
