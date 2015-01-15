@@ -49,13 +49,13 @@ class Bank {
       i1 = acc1; i2 = acc2;
     }
     else {
-      i1 = acc2; i2 = acc2;
+      i1 = acc2; i2 = acc1;
     }
 
     synchronized(accounts[i1]){
       synchronized(accounts[i2]){
-        accounts[i1].withdraw(amount);
-        accounts[i2].deposit(amount);
+        accounts[acc1].withdraw(amount);
+        accounts[acc2].deposit(amount);
       }
     }
   }
