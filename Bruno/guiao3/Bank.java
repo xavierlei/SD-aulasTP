@@ -92,7 +92,7 @@ class Bank {
     l.lock();
     try {
       for(int i = 0; i < ids.length; i++)
-        accs[i] = getAccount(ids[i]);
+        accs[i] = getAccount(ordIds[i]);
       for(int i = 0; i < ids.length; i++)
         accs[i].lock();
     } finally { l.unlock(); }
