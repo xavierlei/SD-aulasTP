@@ -14,7 +14,7 @@ import java.util.concurrent.locks.ReentrantLock;
  *
  * @author Pedro
  */
-public class sdproject {
+public class WareHouse {
     class Produto
     {
       String nome;
@@ -31,7 +31,7 @@ public class sdproject {
     Lock l;
     HashMap<String,Produto> sdproject;
     
-    public sdproject()
+    public WareHouse()
     {
         l= new ReentrantLock();
         sdproject =new HashMap<>();
